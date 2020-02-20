@@ -1,12 +1,11 @@
 #!/bin/bash
 set -e
 
-INSTALL_USER=""
-
-chown -R "$INSTALL_USER":"$INSTALL_USER" /var/lib/postgresql && \
-chown -R "$INSTALL_USER":"$INSTALL_USER" /etc/postgresql && \
-chown -R "$INSTALL_USER":"$INSTALL_USER" /var/run/postgresql
-
+if getent passwd ${INSTALL_USER} > /dev/null 2>&1; then
+    echo "User exists"
+else
+    useradd --uid 1000 ${INSTALL_USER}
+fi
 
 if [ "$#" -eq 0 -o "${1:0:1}" = '-' ]; then
 	set -- pg_upgrade "$@"
@@ -15,9 +14,9 @@ fi
 if [ "$1" = 'pg_upgrade' -a "$(id -u)" = '0' ]; then
 	mkdir -p "$PGDATAOLD" "$PGDATANEW"
 	chmod 700 "$PGDATAOLD" "$PGDATANEW"
-	chown "$INSTALL_USER" .
-	chown -R "$INSTALL_USER" "$PGDATAOLD" "$PGDATANEW"
-	exec gosu "$INSTALL_USER" "$BASH_SOURCE" "$@"
+	chown ${INSTALL_USER} .
+	chown -R ${INSTALL_USER} "$PGDATAOLD" "$PGDATANEW"
+	exec gosu ${INSTALL_USER} "$BASH_SOURCE" "$@"
 fi
 
 if [ "$1" = 'pg_upgrade' ]; then

@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		postgresql-10=10.12-1.pgdg100+1 \
 	&& rm -rf /var/lib/apt/lists/*
 
+ENV INSTALL_USER=""
+
 ENV PGBINOLD /usr/lib/postgresql/10/bin
 ENV PGBINNEW /usr/lib/postgresql/12/bin
 
