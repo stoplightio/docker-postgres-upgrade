@@ -19,9 +19,6 @@ RUN mkdir -p "$PGDATAOLD" "$PGDATANEW" \
 
 WORKDIR /var/lib/postgresql
 
-COPY docker-upgrade /usr/local/bin/
+COPY ./entrypoint.sh /sbin/entrypoint.sh
 
-ENTRYPOINT ["docker-upgrade"]
-
-# recommended: --link
-CMD ["pg_upgrade"]
+ENTRYPOINT ["/sbin/entrypoint.sh"]
